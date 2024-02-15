@@ -23,7 +23,7 @@ This is a simple URL shortener application that allows users to convert long URL
 5. Run the application: `./mvnw spring-boot:run`
 
 ## Usage
-1. Access the application at `http://localhost:8080`
+1. Access the application at `http://localhost:8081`
 2. Enter a long URL in the provided input field and click "Shorten"
 3. Copy the shortened URL provided
 4. To redirect to the original URL, visit the shortened URL in your browser
