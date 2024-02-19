@@ -2,14 +2,20 @@ package com.example.aka.service;
 
 import com.example.aka.entity.Url;
 import com.example.aka.repo.UrlRepository;
+import com.google.common.hash.Hashing;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Random;
 
 @Service
 public class UrlService {
+
+    Logger logger = LoggerFactory.getLogger(UrlService.class);
 
     private final UrlRepository urlRepository;
     private static final String CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -28,7 +34,7 @@ public class UrlService {
         }
 
         // Generate a unique short URL key
-        String shortUrl = generateShortUrlKey();
+        String shortUrl = generateShortUrlKey(originalUrl);
 
         // Save the URL to the database
         Url url = new Url();
@@ -38,18 +44,31 @@ public class UrlService {
         return shortUrl;
     }
 
-    private String generateShortUrlKey() {
+    private String generateShortUrlKey(String originalUrl) {
         StringBuilder key = new StringBuilder();
         Random random = new SecureRandom();
 
-        for (int i = 0; i < SHORT_URL_LENGTH; i++) {
-            int index = random.nextInt(CHARACTERS.length());
-            key.append(CHARACTERS.charAt(index));
+        // Add prefix (optional)
+        key.append("dispatch.to/");
+
+        // Generate random string
+        for (int i = 0; i < 4; i++) {
+            key.append(CHARACTERS.charAt(random.nextInt(CHARACTERS.length())));
         }
+
+
+        String hashedUrl = Hashing.sha256()
+                .hashString(originalUrl, StandardCharsets.UTF_8)
+                .toString();
+
+
+        logger.info("Hashed : " +hashedUrl);
+
+        // Extract 4 characters from hash
+        key.append(hashedUrl.substring(0, 4));
 
         return key.toString();
     }
-
     public String getOriginalUrl(String shortUrl) {
         if (shortUrl !=null){
             Url url = urlRepository.findByShortUrl(shortUrl);
