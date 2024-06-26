@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 
 @Service
 public class UrlService {
@@ -40,6 +42,7 @@ public class UrlService {
         Url url = new Url();
         url.setOriginalUrl(originalUrl);
         url.setShortUrl(shortUrl);
+        url.setCreationDate(LocalDateTime.now());
         urlRepository.save(url);
         return shortUrl;
     }
