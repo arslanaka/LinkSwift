@@ -4,15 +4,11 @@ import com.example.aka.entity.ShortenedUrl;
 import com.example.aka.entity.Url;
 import com.example.aka.repo.ShortenedUrlRepository;
 import com.example.aka.repo.UrlRepository;
-import com.google.common.hash.Hashing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
-import java.security.SecureRandom;
-import java.util.Random;
 
 @Service
 public class UrlService {
