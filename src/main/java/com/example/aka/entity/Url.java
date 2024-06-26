@@ -11,11 +11,11 @@ public class Url {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "original_url")
+    @Column(name = "long_url")
     private String originalUrl;
     @Column(name = "short_url")
     private String shortUrl;
-    @Column(name = "creation_date")
+    @Column(name = "created_at")
     private LocalDateTime creationDate;
 
     // Constructors, getters, and setters

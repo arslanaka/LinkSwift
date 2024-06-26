@@ -1,6 +1,8 @@
 package com.example.aka.service;
 
+import com.example.aka.entity.ShortenedUrl;
 import com.example.aka.entity.Url;
+import com.example.aka.repo.ShortenedUrlRepository;
 import com.example.aka.repo.UrlRepository;
 import com.google.common.hash.Hashing;
 import org.slf4j.Logger;
@@ -18,8 +20,9 @@ public class UrlService {
     Logger logger = LoggerFactory.getLogger(UrlService.class);
 
     private final UrlRepository urlRepository;
-    private static final String CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    private static final int SHORT_URL_LENGTH = 8;
+
+    @Autowired
+    private ShortenedUrlRepository shortenedUrlRepository;
 
     @Autowired
     public UrlService(UrlRepository urlRepository) {
@@ -27,16 +30,17 @@ public class UrlService {
     }
 
     public String shortenUrl(String originalUrl) {
-        // Check if the URL already exists in the database
+
         Url existingUrl = urlRepository.findByOriginalUrl(originalUrl);
         if (existingUrl != null) {
-            return existingUrl.getShortUrl();
+            return existingUrl.getOriginalUrl();
         }
 
         // Generate a unique short URL key
-        String shortUrl = generateShortUrlKey(originalUrl);
+        String shortUrl = getShortUrl();
+        logger.info("my short url is : "+shortUrl);
 
-        // Save the URL to the database
+
         Url url = new Url();
         url.setOriginalUrl(originalUrl);
         url.setShortUrl(shortUrl);
@@ -44,31 +48,16 @@ public class UrlService {
         return shortUrl;
     }
 
-    private String generateShortUrlKey(String originalUrl) {
-        StringBuilder key = new StringBuilder();
-        Random random = new SecureRandom();
-
-        // Add prefix (optional)
-        key.append("dispatch.to/");
-
-        // Generate random string
-        for (int i = 0; i < 4; i++) {
-            key.append(CHARACTERS.charAt(random.nextInt(CHARACTERS.length())));
+    private String getShortUrl() {
+        ShortenedUrl shortenedUrl = shortenedUrlRepository.findOneByIsUsed(0);
+        if (shortenedUrl==null){
+            logger.info("Call Batch Service Here");
         }
-
-
-        String hashedUrl = Hashing.sha256()
-                .hashString(originalUrl, StandardCharsets.UTF_8)
-                .toString();
-
-
-        logger.info("Hashed : " +hashedUrl);
-
-        // Extract 4 characters from hash
-        key.append(hashedUrl.substring(0, 4));
-
-        return key.toString();
+        assert shortenedUrl != null;
+        return shortenedUrl.getShortUrl();
     }
+
+
     public String getOriginalUrl(String shortUrl) {
         if (shortUrl !=null){
             Url url = urlRepository.findByShortUrl(shortUrl);

@@ -16,6 +16,16 @@ public class ShortenedUrl {
     @Column(name = "short_url")
     private String shortUrl;
 
+    @Column(name = "is_used")
+    private Integer isUsed;
+
+    public Integer getIsUsed() {
+        return isUsed;
+    }
+
+    public void setIsUsed(Integer isUsed) {
+        this.isUsed = isUsed;
+    }
 
     @Override
     public boolean equals(Object o) {
