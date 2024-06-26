@@ -1,5 +1,6 @@
 package com.example.aka.service;
 
+import com.example.aka.entity.DTO.UrlDTO;
 import com.example.aka.entity.ShortenedUrl;
 import com.example.aka.entity.Url;
 import com.example.aka.repo.ShortenedUrlRepository;
@@ -44,6 +45,11 @@ public class UrlService {
         url.setShortUrl(shortUrl);
         url.setCreationDate(LocalDateTime.now());
         urlRepository.save(url);
+
+        //update the isUsed
+        ShortenedUrl shortenedUrl = shortenedUrlRepository.getByShortUrl(shortUrl);
+        shortenedUrl.setIsUsed(1);
+        shortenedUrlRepository.save(shortenedUrl);
         return shortUrl;
     }
 
@@ -57,13 +63,17 @@ public class UrlService {
     }
 
 
-    public String getOriginalUrl(String shortUrl) {
+    public UrlDTO getOriginalUrl(String shortUrl) {
+        UrlDTO dto = new UrlDTO();
+
         if (shortUrl !=null){
             Url url = urlRepository.findByShortUrl(shortUrl);
             if (url != null){
-                return url.getOriginalUrl();
+                dto.setShortUrl(url.getShortUrl());
+                dto.setOriginalUrl(url.getOriginalUrl());
+                dto.setCreationDate(url.getCreationDate());
             }
         }
-        return "Could not find original url.";
+        return dto;
     }
 }

@@ -13,4 +13,8 @@ public interface ShortenedUrlRepository extends JpaRepository<ShortenedUrl,Integ
 
     @Query(value = "SELECT * FROM pre_generated_short_urls WHERE is_used = :isUsed LIMIT 1", nativeQuery = true)
     ShortenedUrl findOneByIsUsed(@Param("isUsed") int isUsed);
+
+
+    @Query(value = "select * from pre_generated_short_urls where short_url = :shortRl", nativeQuery = true)
+    ShortenedUrl getByShortUrl(@Param("shortRl") String shortUrl);
 }

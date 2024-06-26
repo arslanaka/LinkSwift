@@ -1,5 +1,6 @@
 package com.example.aka.controller;
 
+import com.example.aka.entity.DTO.UrlDTO;
 import com.example.aka.service.PreGeneratedShortUrls;
 import com.example.aka.service.UrlService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ public class UrlController {
     }
 
     @GetMapping("/{shortUrl}")
-    public String getOriginalUrl(@PathVariable String shortUrl) {
+    public UrlDTO getOriginalUrl(@PathVariable String shortUrl) {
         return urlService.getOriginalUrl(shortUrl);
     }
 }
