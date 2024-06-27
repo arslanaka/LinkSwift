@@ -24,6 +24,9 @@ public class UrlService {
     private ShortenedUrlRepository shortenedUrlRepository;
 
     @Autowired
+    private PreGeneratedShortUrls preGeneratedShortUrls;
+
+    @Autowired
     public UrlService(UrlRepository urlRepository) {
         this.urlRepository = urlRepository;
     }
@@ -37,7 +40,6 @@ public class UrlService {
 
         // Generate a unique short URL key
         String shortUrl = getShortUrl();
-        logger.info("my short url is : "+shortUrl);
 
 
         Url url = new Url();
@@ -56,7 +58,8 @@ public class UrlService {
     private String getShortUrl() {
         ShortenedUrl shortenedUrl = shortenedUrlRepository.findOneByIsUsed(0);
         if (shortenedUrl==null){
-            logger.info("Call Batch Service Here");
+            preGeneratedShortUrls.generateAndSaveBatch();
+            shortenedUrl = shortenedUrlRepository.findOneByIsUsed(0);
         }
         assert shortenedUrl != null;
         return shortenedUrl.getShortUrl();
@@ -67,12 +70,10 @@ public class UrlService {
         UrlDTO dto = new UrlDTO();
         if (shortUrl !=null){
             Url url = urlRepository.findByShortUrl(shortUrl);
-            if (url != null){
-                dto.setShortUrl(url.getShortUrl());
+                 dto.setShortUrl(url.getShortUrl());
                 dto.setOriginalUrl(url.getOriginalUrl());
                 dto.setCreationDate(url.getCreationDate());
             }
-        }
         return dto;
     }
 }
