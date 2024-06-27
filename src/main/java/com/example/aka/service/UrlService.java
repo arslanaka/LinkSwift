@@ -65,7 +65,6 @@ public class UrlService {
 
     public UrlDTO getOriginalUrl(String shortUrl) {
         UrlDTO dto = new UrlDTO();
-
         if (shortUrl !=null){
             Url url = urlRepository.findByShortUrl(shortUrl);
             if (url != null){
