@@ -5,8 +5,10 @@ import com.example.aka.service.PreGeneratedShortUrls;
 import com.example.aka.service.UrlService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/url")
@@ -37,7 +39,9 @@ public class UrlController {
     }
 
     @GetMapping("/{shortUrl}")
-    public UrlDTO getOriginalUrl(@PathVariable String shortUrl) {
-        return urlService.getOriginalUrl(shortUrl);
+    public RedirectView getOriginalUrl(@PathVariable String shortUrl) {
+        String originalUrl = urlService.getOriginalUrl(shortUrl);
+        return new RedirectView(Objects.requireNonNullElse(originalUrl, "/error"));
+        //replace with error page
     }
 }

@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 
 
@@ -52,7 +54,7 @@ public class UrlService {
         ShortenedUrl shortenedUrl = shortenedUrlRepository.getByShortUrl(shortUrl);
         shortenedUrl.setIsUsed(1);
         shortenedUrlRepository.save(shortenedUrl);
-        return shortUrl;
+        return "https://Swft/"+shortUrl;
     }
 
     private String getShortUrl() {
@@ -66,14 +68,26 @@ public class UrlService {
     }
 
 
-    public UrlDTO getOriginalUrl(String shortUrl) {
-        UrlDTO dto = new UrlDTO();
+    public String getOriginalUrl(String shortUrl) {
         if (shortUrl !=null){
-            Url url = urlRepository.findByShortUrl(shortUrl);
-                 dto.setShortUrl(url.getShortUrl());
-                dto.setOriginalUrl(url.getOriginalUrl());
-                dto.setCreationDate(url.getCreationDate());
+            try {
+                Url url = urlRepository.findByShortUrl(extractPath(shortUrl));
+                return url.getOriginalUrl();
+            }catch (URISyntaxException e){
+                logger.error("URI EXTRACTION EXCEPTION: "+e.getLocalizedMessage());
             }
-        return dto;
+        }
+        return null;
+    }
+
+    private String extractPath(String url) throws URISyntaxException {
+        URI uri = new URI(url);
+        String path = uri.getPath();
+        // Remove leading slash if present
+        if (path.startsWith("/")) {
+            path = path.substring(1);
+        }
+        logger.info("Extracted Path: "+path);
+        return path;
     }
 }
