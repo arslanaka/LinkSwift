@@ -18,6 +18,21 @@ public class Url {
     @Column(name = "created_at")
     private LocalDateTime creationDate;
 
+    @Column(name = "click_count")
+    private Integer clickCount;
+
+
+    public void incrementClickCount() {
+        this.clickCount++;
+    }
+    public Integer getClickCount() {
+        return clickCount;
+    }
+
+    public void setClickCount(Integer clickCount) {
+        this.clickCount = clickCount;
+    }
+
     // Constructors, getters, and setters
 
     // Constructors

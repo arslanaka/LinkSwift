@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
@@ -68,10 +69,13 @@ public class UrlService {
     }
 
 
+    @Transactional
     public String getOriginalUrl(String shortUrl) {
         if (shortUrl !=null){
             try {
                 Url url = urlRepository.findByShortUrl(extractPath(shortUrl));
+                url.incrementClickCount();
+                urlRepository.save(url);
                 return url.getOriginalUrl();
             }catch (URISyntaxException e){
                 logger.error("URI EXTRACTION EXCEPTION: "+e.getLocalizedMessage());
