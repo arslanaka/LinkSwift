@@ -55,7 +55,8 @@ public class UrlService {
         ShortenedUrl shortenedUrl = shortenedUrlRepository.getByShortUrl(shortUrl);
         shortenedUrl.setIsUsed(1);
         shortenedUrlRepository.save(shortenedUrl);
-        return "https://Swft/"+shortUrl;
+        String baseUrl = "https://Swft/";
+        return baseUrl +shortUrl;
     }
 
     private String getShortUrl() {
